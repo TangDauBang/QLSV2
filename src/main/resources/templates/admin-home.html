@@ -1,28 +1,38 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Admin Home - QLSV</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         .sidebar {
             width: 250px;
             height: 100vh;
-            background: #2c3e50;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             position: fixed;
             color: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            z-index: 1000;
         }
 
         .sidebar h2 {
             text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #34495e;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 22px;
+            font-weight: 600;
         }
 
         .sidebar a {
@@ -30,117 +40,462 @@
             padding: 15px 20px;
             color: white;
             text-decoration: none;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
         }
 
         .sidebar a:hover {
-            background: #34495e;
+            background: rgba(255,255,255,0.1);
+            border-left-color: #3498db;
+            padding-left: 25px;
         }
 
         .main {
             margin-left: 250px;
-            padding: 20px;
+            padding: 30px;
         }
 
+        /* Header */
         .header {
             background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        /* Statistics Section */
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            border-top: 4px solid;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+
+        .stat-card.sinhvien {
+            border-top-color: #3498db;
+        }
+
+        .stat-card.giangvien {
+            border-top-color: #2ecc71;
+        }
+
+        .stat-card.monhoc {
+            border-top-color: #e74c3c;
+        }
+
+        .stat-card.lopmonhoc {
+            border-top-color: #f39c12;
+        }
+
+        .stat-card.dangkyhoc {
+            border-top-color: #9b59b6;
+        }
+
+        .stat-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Cards Section */
+        .cards-title {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
             margin-bottom: 20px;
         }
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(5, 1fr);
             gap: 20px;
         }
 
         .card {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             text-align: center;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 320px;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
         }
 
         .card h3 {
-            margin: 10px 0;
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card p {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .card button {
-            padding: 10px 15px;
+            padding: 12px 20px;
             border: none;
-            background: #3498db;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
         }
 
         .card button:hover {
-            background: #2980b9;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .card button:active {
+            transform: scale(0.98);
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .statistics {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            .cards {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .statistics {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 15px;
+            }
+            .cards {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 15px;
+            }
+            .stat-card, .card {
+                padding: 20px;
+            }
+            .stat-number {
+                font-size: 28px;
+            }
+            .card h3 {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main {
+                margin-left: 250px;
+                padding: 20px;
+            }
+
+            .statistics {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+
+            .cards {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+
+            .stat-card, .card {
+                min-height: auto;
+                padding: 20px;
+            }
+
+            .stat-number {
+                font-size: 32px;
+            }
+
+            .card {
+                min-height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                transform: translateX(-100%);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .header {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .statistics {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-bottom: 25px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-icon {
+                font-size: 36px;
+            }
+
+            .stat-number {
+                font-size: 24px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            .card {
+                min-height: auto;
+                padding: 20px;
+            }
+
+            .card-icon {
+                font-size: 40px;
+            }
+
+            .card h3 {
+                font-size: 16px;
+            }
+
+            .card p {
+                font-size: 13px;
+            }
+
+            .cards-title {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+
+            .statistics {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-icon {
+                font-size: 32px;
+            }
+
+            .stat-number {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <h2>Admin</h2>
-    <a th:href="@{/admin/sinhvien}">Quản lý Sinh viên</a>
-    <a th:href="@{/admin/giangvien}">Quản lý Giảng viên</a>
-    <a th:href="@{/admin/monhoc}">Quản lý Môn học</a>
-    <a th:href="@{/admin/lopmonhoc}">Quản lý Lớp môn học</a>
-    <a th:href="@{/admin/dangkyhoc}">Quản lý Đăng ký học</a>
-    <a th:href="@{/admin/dangxuat}">Đăng xuất</a>
+    <h2>📊 Admin</h2>
+    <a th:href="@{/admin}">🏠 Trang chủ</a>
+    <a th:href="@{/admin/sinhvien}">👨‍🎓 Sinh viên</a>
+    <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
+    <a th:href="@{/admin/monhoc}">📚 Môn học</a>
+    <a th:href="@{/admin/lopmonhoc}">📖 Lớp môn học</a>
+    <a th:href="@{/admin/dangkyhoc}">📝 Đăng ký học</a>
 </div>
 
 <div class="main">
+    <!-- Header -->
     <div class="header">
-        <h1>Trang quản trị hệ thống QLSV</h1>
-        <p>Chào mừng bạn quay trở lại 👋</p>
+        <h1>👋 Trang quản trị hệ thống QLSV</h1>
+        <p>Chào mừng bạn! Dưới đây là thống kê tổng quan của hệ thống</p>
     </div>
 
+    <!-- Statistics Section - 5 card thống kê -->
+    <div class="statistics">
+        <!-- Sinh viên -->
+        <div class="stat-card sinhvien">
+            <div class="stat-icon">👨‍🎓</div>
+            <div class="stat-number" th:text="${totalSinhVien}">0</div>
+            <div class="stat-label">Sinh viên</div>
+        </div>
+
+        <!-- Giảng viên -->
+        <div class="stat-card giangvien">
+            <div class="stat-icon">👨‍🏫</div>
+            <div class="stat-number" th:text="${totalGiangVien}">0</div>
+            <div class="stat-label">Giảng viên</div>
+        </div>
+
+        <!-- Môn học -->
+        <div class="stat-card monhoc">
+            <div class="stat-icon">📚</div>
+            <div class="stat-number" th:text="${totalMonHoc}">0</div>
+            <div class="stat-label">Môn học</div>
+        </div>
+
+        <!-- Lớp môn học -->
+        <div class="stat-card lopmonhoc">
+            <div class="stat-icon">📖</div>
+            <div class="stat-number" th:text="${totalLopMonHoc}">0</div>
+            <div class="stat-label">Lớp môn học</div>
+        </div>
+
+        <!-- Đăng ký học -->
+        <div class="stat-card dangkyhoc">
+            <div class="stat-icon">📝</div>
+            <div class="stat-number" th:text="${totalDangKyHoc}">0</div>
+            <div class="stat-label">Lượt đăng ký</div>
+        </div>
+    </div>
+
+    <!-- Management Cards - 5 card quản lý -->
     <div class="cards">
-        <div class="card">
-            <h3>Sinh viên</h3>
-            <p>Quản lý thông tin sinh viên</p>
-            <button onclick="goTo('sinhvien')">Đi tới</button>
+        <div class="card" onclick="goTo('sinhvien')">
+            <div>
+                <div class="card-icon">👨‍🎓</div>
+                <h3>Quản lý Sinh viên</h3>
+                <p>Xem và quản lý thông tin sinh viên trong hệ thống</p>
+            </div>
+            <button type="button">Truy cập →</button>
         </div>
 
-        <div class="card">
-            <h3>Giảng viên</h3>
-            <p>Quản lý giảng viên</p>
-            <button onclick="goTo('giangvien')">Đi tới</button>
+        <div class="card" onclick="goTo('giangvien')">
+            <div>
+                <div class="card-icon">👨‍🏫</div>
+                <h3>Quản lý Giảng viên</h3>
+                <p>Xem và quản lý thông tin giảng viên</p>
+            </div>
+            <button type="button">Truy cập →</button>
         </div>
 
-        <div class="card">
-            <h3>Môn học</h3>
-            <p>Quản lý môn học</p>
-            <button onclick="goTo('monhoc')">Đi tới</button>
+        <div class="card" onclick="goTo('monhoc')">
+            <div>
+                <div class="card-icon">📚</div>
+                <h3>Quản lý Môn học</h3>
+                <p>Xem và quản lý các môn học trong chương trình</p>
+            </div>
+            <button type="button">Truy cập →</button>
         </div>
 
-        <div class="card">
-            <h3>Lớp môn học</h3>
-            <p>Quản lý lớp môn học</p>
-            <button onclick="goTo('lopmonhoc')">Đi tới</button>
+        <div class="card" onclick="goTo('lopmonhoc')">
+            <div>
+                <div class="card-icon">📖</div>
+                <h3>Quản lý Lớp môn học</h3>
+                <p>Xem và quản lý các lớp môn học đang mở</p>
+            </div>
+            <button type="button">Truy cập →</button>
         </div>
 
-        <div class="card">
-            <h3>Đăng ký học</h3>
-            <p>Quản lý đăng ký học</p>
-            <button onclick="goTo('dangkyhoc')">Đi tới</button>
+        <div class="card" onclick="goTo('dangkyhoc')">
+            <div>
+                <div class="card-icon">📝</div>
+                <h3>Quản lý Đăng ký học</h3>
+                <p>Xem và quản lý các lượt đăng ký học của sinh viên</p>
+            </div>
+            <button type="button">Truy cập →</button>
+        </div>
     </div>
 </div>
 
 <script>
     function goTo(page) {
-        // sửa URL theo backend của m
-        window.location.href = 'admin/' + page;
+        window.location.href = '/admin/' + page;
     }
 </script>
 
