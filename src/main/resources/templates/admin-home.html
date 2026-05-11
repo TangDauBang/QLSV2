@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Home - QLSV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #2c3e50;
+            position: fixed;
+            color: white;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #34495e;
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin: 10px 0;
+        }
+
+        .card button {
+            padding: 10px 15px;
+            border: none;
+            background: #3498db;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .card button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Admin</h2>
+    <a href="#">Quản lý Sinh viên</a>
+    <a href="#">Quản lý Giảng viên</a>
+    <a href="#">Quản lý Môn học</a>
+    <a href="#">Quản lý Lớp môn học</a>
+    <a href="#">Đăng xuất</a>
+</div>
+
+<div class="main">
+    <div class="header">
+        <h1>Trang quản trị hệ thống QLSV</h1>
+        <p>Chào mừng bạn quay trở lại 👋</p>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Sinh viên</h3>
+            <p>Quản lý thông tin sinh viên</p>
+            <button onclick="goTo('sinhvien')">Đi tới</button>
+        </div>
+
+        <div class="card">
+            <h3>Giảng viên</h3>
+            <p>Quản lý giảng viên</p>
+            <button onclick="goTo('giangvien')">Đi tới</button>
+        </div>
+
+        <div class="card">
+            <h3>Môn học</h3>
+            <p>Quản lý môn học</p>
+            <button onclick="goTo('monhoc')">Đi tới</button>
+        </div>
+
+        <div class="card">
+            <h3>Lớp môn học</h3>
+            <p>Quản lý lớp học</p>
+            <button onclick="goTo('lopmonhoc')">Đi tới</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function goTo(page) {
+        // sửa URL theo backend của m
+        window.location.href = 'admin/' + page;
+    }
+</script>
+
+</body>
+</html>

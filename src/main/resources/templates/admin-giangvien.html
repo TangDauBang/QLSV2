@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Giảng viên</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: #2c3e50;
+            position: fixed;
+            color: white;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #3d566e;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #34495e;
+            padding-left: 25px;
+        }
+
+        /* Main */
+        .main {
+            margin-left: 230px;
+            padding: 25px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        /* Form */
+        .form {
+            margin-bottom: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .form form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            min-width: 150px;
+        }
+
+        input[name="search"] {
+            min-width: 320px;
+            flex: 1;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: #3498db;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .delete {
+            background: #e74c3c;
+        }
+
+        .delete:hover {
+            background: #c0392b;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        tr:hover {
+            background: #eef6ff;
+        }
+
+        td a button {
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Admin</h2>
+    <a th:href="@{/admin}">Trang chủ</a>
+    <a th:href="@{/admin/sinhvien}">Sinh viên</a>
+    <a th:href="@{/admin/giangvien}">Giảng viên</a>
+    <a th:href="@{/admin/monhoc}">Môn học</a>
+</div>
+
+<div class="main">
+    <h1>Quản lý Giảng viên</h1>
+
+    <!-- Search Form -->
+    <div class="form">
+        <form th:action="@{/admin/giangvien}" method="get">
+            <input type="text" name="search" th:value="${search}" placeholder="🔍 Tìm kiếm giảng viên theo tên giảng viên" />
+            <button type="submit">Tìm kiếm</button>
+            <a th:href="@{/admin/giangvien}">
+                <button type="button" style="background: #95a5a6;">Xóa bộ lọc</button>
+            </a>
+        </form>
+    </div>
+
+    <!-- Add Button -->
+    <div class="form" style="justify-content: flex-end;">
+        <a th:href="@{/admin/giangvien/add}">
+            <button style="background: #27ae60;">➕ Thêm giảng viên mới</button>
+        </a>
+    </div>
+
+    <!-- Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>SĐT</th>
+                <th>Khoa</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="gv : ${listGiangVien}">
+                <td th:text="${gv.maGV}"></td>
+                <td th:text="${gv.hoTen}"></td>
+                <td th:text="${gv.email}"></td>
+                <td th:text="${gv.sdt}"></td>
+                <td th:text="${gv.khoa}"></td>
+                <td>
+                    <a th:href="@{'/admin/giangvien/edit/' + ${gv.maGV}}">
+                        <button>Sửa</button>
+                    </a>
+                    <a th:href="@{'/admin/giangvien/delete/' + ${gv.maGV}}">
+                        <button class="delete">Xóa</button>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
+
