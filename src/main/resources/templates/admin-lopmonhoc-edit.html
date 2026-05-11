@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sửa Lớp môn học</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            padding-left: 25px;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            max-width: 700px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .readonly-field {
+            background: #f8f9fa;
+            color: #666;
+        }
+
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input:disabled {
+            background: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+        input:invalid {
+            border-color: #e74c3c;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-message strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f2f5;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .tiет-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .form-container {
+                padding: 20px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .form-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Admin</h2>
+    <a th:href="@{/admin}">🏠 Trang chủ</a>
+    <a th:href="@{/admin/sinhvien}">👨‍🎓 Sinh viên</a>
+    <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
+    <a th:href="@{/admin/monhoc}">📚 Môn học</a>
+    <a th:href="@{/admin/lopmonhoc}" class="active">📖 Lớp môn học</a>
+</div>
+
+<div class="main">
+    <h1>✏️ Sửa thông tin lớp môn học</h1>
+
+    <div class="form-container">
+        <div th:if="${error}" class="error-message">
+            <strong>⚠️ Lỗi:</strong> <span th:text="${error}"></span>
+        </div>
+
+        <div class="info-box">
+            <strong>ℹ️ Lưu ý:</strong> Hệ thống sẽ kiểm tra trùng lịch khi bạn thay đổi giảng viên, phòng học hoặc thời gian.
+        </div>
+
+        <!-- Thông tin lớp hiện tại -->
+        <div class="info-item">
+            <div class="info-label">📚 Môn học hiện tại</div>
+            <div class="info-value" th:text="${lop.monHoc.tenMon + ' (' + lop.monHoc.soTinChi + ' tín chỉ)'}"></div>
+        </div>
+
+        <div class="info-item">
+            <div class="info-label">👥 Số lượng sinh viên đã đăng ký</div>
+            <div class="info-value" th:text="${(lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0) + ' / ' + lop.siSoToiDa}"></div>
+        </div>
+
+        <form th:action="@{/admin/lopmonhoc/update}" method="post" novalidate>
+            <input type="hidden" name="maLopMonHoc" th:value="${lop.maLopMonHoc}" />
+            <input type="hidden" name="monHoc.maMon" th:value="${lop.monHoc.maMon}" />
+
+            <!-- Giảng viên -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="giangVien">Giảng viên <span class="required">*</span></label>
+                    <select id="giangVien" name="giangVien.maGV" required>
+                        <option value="">-- Chọn giảng viên --</option>
+                        <option th:each="gv : ${listGiangVien}" 
+                                th:value="${gv.maGV}"
+                                th:selected="${lop.giangVien.maGV == gv.maGV}"
+                                th:text="${gv.hoTen + ' (' + gv.khoa + ')'}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="nhom">Nhóm <span class="required">*</span></label>
+                    <input type="text" id="nhom" name="nhom" th:value="${lop.nhom}" 
+                           placeholder="VD: 01, 02, A, B" required />
+                </div>
+            </div>
+
+            <!-- Sĩ số & Ngày học -->
+            <div class="form-row full">
+                <div class="form-group">
+                    <label for="siSoToiDa">Sĩ số tối đa <span class="required">*</span></label>
+                    <input type="number" id="siSoToiDa" name="siSoToiDa" th:value="${lop.siSoToiDa}" 
+                           min="10" max="100" required />
+                </div>
+            </div>
+
+            <!-- Ngày học trong tuần -->
+            <div class="form-row full">
+                <label>Ngày học trong tuần <span class="required">*</span></label>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="day2" name="ngayHocCheckbox" value="Thứ 2" 
+                               th:checked="${lop.ngayHoc != null && lop.ngayHoc.contains('Thứ 2')}" />
+                        <label for="day2" style="margin: 0; font-weight: 400;">Thứ 2</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="day3" name="ngayHocCheckbox" value="Thứ 3" 
+                               th:checked="${lop.ngayHoc != null && lop.ngayHoc.contains('Thứ 3')}" />
+                        <label for="day3" style="margin: 0; font-weight: 400;">Thứ 3</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="day4" name="ngayHocCheckbox" value="Thứ 4" 
+                               th:checked="${lop.ngayHoc != null && lop.ngayHoc.contains('Thứ 4')}" />
+                        <label for="day4" style="margin: 0; font-weight: 400;">Thứ 4</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="day5" name="ngayHocCheckbox" value="Thứ 5" 
+                               th:checked="${lop.ngayHoc != null && lop.ngayHoc.contains('Thứ 5')}" />
+                        <label for="day5" style="margin: 0; font-weight: 400;">Thứ 5</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="day6" name="ngayHocCheckbox" value="Thứ 6" 
+                               th:checked="${lop.ngayHoc != null && lop.ngayHoc.contains('Thứ 6')}" />
+                        <label for="day6" style="margin: 0; font-weight: 400;">Thứ 6</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="day7" name="ngayHocCheckbox" value="Thứ 7" 
+                               th:checked="${lop.ngayHoc != null && lop.ngayHoc.contains('Thứ 7')}" />
+                        <label for="day7" style="margin: 0; font-weight: 400;">Thứ 7</label>
+                    </div>
+                </div>
+                <input type="hidden" id="ngayHoc" name="ngayHoc" th:value="${lop.ngayHoc}" />
+            </div>
+
+            <!-- Phòng học -->
+            <div class="form-row full">
+                <div class="form-group">
+                    <label for="phongHoc">Phòng học <span class="required">*</span></label>
+                    <input type="text" id="phongHoc" name="phongHoc" th:value="${lop.phongHoc}" 
+                           placeholder="VD: A101, B205" required />
+                </div>
+            </div>
+
+            <!-- Tiết -->
+            <div class="form-row full">
+                <label>Thời gian <span class="required">*</span></label>
+                <div class="tiет-group">
+                    <div class="form-group">
+                        <label for="tietBatDau">Tiết bắt đầu (1-12) <span class="required">*</span></label>
+                        <input type="number" id="tietBatDau" name="tietBatDau" th:value="${lop.tietBatDau}" 
+                               min="1" max="12" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="tietKetThuc">Tiết kết thúc (1-12) <span class="required">*</span></label>
+                        <input type="number" id="tietKetThuc" name="tietKetThuc" th:value="${lop.tietKetThuc}" 
+                               min="1" max="12" required />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-buttons">
+                <a th:href="@{/admin/lopmonhoc}">
+                    <button type="button" class="btn btn-secondary">❌ Hủy</button>
+                </a>
+                <button type="submit" class="btn btn-primary">💾 Cập nhật</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const tietBatDau = document.getElementById('tietBatDau');
+        const tietKetThuc = document.getElementById('tietKetThuc');
+        const siSoToiDa = document.getElementById('siSoToiDa');
+        const ngayHocInput = document.getElementById('ngayHoc');
+        const checkboxes = document.querySelectorAll('input[name="ngayHocCheckbox"]');
+
+        // Hàm cập nhật giá trị ngayHoc từ checkboxes
+        function updateNgayHoc() {
+            const selectedDays = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value)
+                .join(', ');
+            ngayHocInput.value = selectedDays;
+        }
+
+        // Thêm sự kiện change cho các checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateNgayHoc);
+        });
+
+        // Kiểm tra tiết bắt đầu < tiết kết thúc
+        function validateTiet() {
+            if (tietBatDau.value && tietKetThuc.value) {
+                const start = parseInt(tietBatDau.value);
+                const end = parseInt(tietKetThuc.value);
+                if (start >= end) {
+                    tietKetThuc.setCustomValidity('Tiết kết thúc phải lớn hơn tiết bắt đầu!');
+                    tietKetThuc.style.borderColor = '#e74c3c';
+                } else {
+                    tietKetThuc.setCustomValidity('');
+                    tietKetThuc.style.borderColor = '#e0e0e0';
+                }
+            }
+        }
+
+        tietBatDau.addEventListener('change', validateTiet);
+        tietKetThuc.addEventListener('change', validateTiet);
+
+        siSoToiDa.addEventListener('blur', function() {
+            const val = parseInt(this.value);
+            if (this.value && (val < 10 || val > 100)) {
+                this.setCustomValidity('Sĩ số phải từ 10-100!');
+                this.style.borderColor = '#e74c3c';
+            } else {
+                this.setCustomValidity('');
+                this.style.borderColor = '#e0e0e0';
+            }
+        });
+
+        // Kiểm tra phải chọn ít nhất một ngày
+        form.addEventListener('submit', function(e) {
+            if (!ngayHocInput.value.trim()) {
+                e.preventDefault();
+                alert('Vui lòng chọn ít nhất một ngày học!');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

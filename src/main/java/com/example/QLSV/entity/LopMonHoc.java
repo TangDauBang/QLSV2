@@ -1,7 +1,6 @@
 package com.example.QLSV.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,7 +31,7 @@ public class LopMonHoc {
 
     private Integer siSoToiDa;
 
-    private LocalDate ngayHoc;
+    private String ngayHoc;
 
     private String phongHoc;
 
@@ -82,11 +81,11 @@ public class LopMonHoc {
         this.siSoToiDa = siSoToiDa;
     }
 
-    public LocalDate getNgayHoc() {
+    public String getNgayHoc() {
         return ngayHoc;
     }
 
-    public void setNgayHoc(LocalDate ngayHoc) {
+    public void setNgayHoc(String ngayHoc) {
         this.ngayHoc = ngayHoc;
     }
 

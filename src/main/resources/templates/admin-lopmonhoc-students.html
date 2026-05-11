@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách Sinh viên đăng ký</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            padding-left: 25px;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 25px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .breadcrumb {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Class Info Section */
+        .class-info {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+
+        .info-card-label {
+            font-size: 12px;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .info-card-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .capacity-bar {
+            margin-top: 10px;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .capacity-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        /* Stats */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            border-top: 3px solid #667eea;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Status badges */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-suspend {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-graduated {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Back button */
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        /* Empty message */
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-message-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 1200px) {
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .main {
+                margin-left: 0;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            .class-info {
+                grid-template-columns: 1fr;
+            }
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Admin</h2>
+    <a th:href="@{/admin}">🏠 Trang chủ</a>
+    <a th:href="@{/admin/sinhvien}">👨‍🎓 Sinh viên</a>
+    <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
+    <a th:href="@{/admin/monhoc}">📚 Môn học</a>
+    <a th:href="@{/admin/lopmonhoc}" class="active">📖 Lớp môn học</a>
+</div>
+
+<div class="main">
+    <div class="back-button">
+        <a th:href="@{/admin/lopmonhoc}">
+            <button class="btn btn-secondary">← Quay lại</button>
+        </a>
+    </div>
+
+    <h1>👥 Danh sách Sinh viên đăng ký</h1>
+    <div class="breadcrumb">
+        <a th:href="@{/admin/lopmonhoc}">Lớp môn học</a> > 
+        <span th:text="${lop.monHoc.tenMon + ' - Nhóm ' + lop.nhom}"></span>
+    </div>
+
+    <!-- Class Information -->
+    <div class="class-info">
+        <div class="info-card">
+            <div class="info-card-label">📚 Môn học</div>
+            <div class="info-card-value" th:text="${lop.monHoc.tenMon}"></div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-label">👨‍🏫 Giảng viên</div>
+            <div class="info-card-value" th:text="${lop.giangVien.hoTen}"></div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-label">📅 Thời gian</div>
+            <div class="info-card-value" 
+                 th:text="${#dates.format(lop.ngayHoc, 'dd/MM/yyyy') + ', Tiết ' + lop.tietBatDau + '-' + lop.tietKetThuc}"></div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-label">🏠 Phòng học</div>
+            <div class="info-card-value" th:text="${lop.phongHoc}"></div>
+        </div>
+        <div class="info-card" style="grid-column: span 1;">
+            <div class="info-card-label">📊 Tình trạng</div>
+            <div class="info-card-value" 
+                 th:text="${registeredCount + ' / ' + capacity + ' chỗ'}"></div>
+            <div class="capacity-bar">
+                <div class="capacity-bar-fill" 
+                     th:style="'width: ' + ${registeredCount * 100 / capacity} + '%'"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-section">
+        <div class="stat-box">
+            <div class="stat-number" th:text="${capacity}"></div>
+            <div class="stat-label">Sĩ số tối đa</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" th:text="${registeredCount}"></div>
+            <div class="stat-label">Đã đăng ký</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" th:text="${availableSeats}"></div>
+            <div class="stat-label">Còn trống</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" 
+                 th:text="${registeredCount == 0 ? '0%' : ((registeredCount * 100) / capacity + '%')}"></div>
+            <div class="stat-label">Tỷ lệ đăng ký</div>
+        </div>
+    </div>
+
+    <!-- Students Table -->
+    <div class="table-container">
+        <table th:if="${#lists.isEmpty(listStudents)}">
+            <tr>
+                <td colspan="6" class="empty-message">
+                    <div class="empty-message-icon">📭</div>
+                    <div>Không có sinh viên nào đăng ký lớp này</div>
+                </td>
+            </tr>
+        </table>
+
+        <table th:unless="${#lists.isEmpty(listStudents)}">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Mã SV</th>
+                    <th style="width: 20%;">Họ tên</th>
+                    <th style="width: 18%;">Email</th>
+                    <th style="width: 15%;">Khoa</th>
+                    <th style="width: 18%;">Ngày đăng ký</th>
+                    <th style="width: 13%;">Điểm TK</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="dk : ${listStudents}">
+                    <td th:text="${dk.sinhVien.maSV}"></td>
+                    <td>
+                        <strong th:text="${dk.sinhVien.hoTen}"></strong>
+                        <br/>
+                        <span style="color: #999; font-size: 12px;" 
+                              th:text="${'Giới tính: ' + dk.sinhVien.gioiTinh}"></span>
+                    </td>
+                    <td th:text="${dk.sinhVien.email}"></td>
+                    <td th:text="${dk.sinhVien.khoa}"></td>
+                    <td th:text="${#dates.format(dk.ngayDangKy, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                        <span th:if="${dk.diem != null && dk.diem.diemTongKet != null}"
+                              th:text="${#numbers.formatDecimal(dk.diem.diemTongKet, 0, 1)}"></span>
+                        <span th:unless="${dk.diem != null && dk.diem.diemTongKet != null}"
+                              style="color: #999;">---</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

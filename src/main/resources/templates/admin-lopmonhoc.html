@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Lớp môn học</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            padding-left: 25px;
+        }
+
+        /* Main */
+        .main {
+            margin-left: 230px;
+            padding: 25px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* Search & Filter Section */
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-form select {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+            transition: border-color 0.3s;
+        }
+
+        .search-form select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-form input {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            flex: 1;
+            min-width: 250px;
+            transition: border-color 0.3s;
+        }
+
+        .search-form input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-search {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-search:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-reset {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-add {
+            background: #27ae60;
+            color: white;
+            float: right;
+        }
+
+        .btn-add:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .action-buttons::after {
+            content: '';
+            clear: both;
+            display: table;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(0,0,0,0.1);
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Inline action buttons */
+        .action-btn {
+            padding: 6px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #2980b9;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-students {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-students:hover {
+            background: #d68910;
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+        }
+
+        /* Status badges */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-full {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Info section */
+        .info-text {
+            color: #666;
+            font-size: 13px;
+            margin: 0 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            table {
+                font-size: 13px;
+            }
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .main {
+                margin-left: 0;
+            }
+            .search-form {
+                flex-direction: column;
+            }
+            .btn-add {
+                float: none;
+                width: 100%;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Admin</h2>
+    <a th:href="@{/admin}">🏠 Trang chủ</a>
+    <a th:href="@{/admin/sinhvien}">👨‍🎓 Sinh viên</a>
+    <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
+    <a th:href="@{/admin/monhoc}">📚 Môn học</a>
+    <a th:href="@{/admin/lopmonhoc}" class="active">📖 Lớp môn học</a>
+</div>
+
+<div class="main">
+    <h1>📖 Quản lý Lớp môn học</h1>
+
+    <!-- Search & Filter -->
+    <div class="search-section">
+        <form th:action="@{/admin/lopmonhoc}" method="get" class="search-form">
+            <select name="searchType">
+                <option value="">-- Tìm kiếm theo --</option>
+                <option value="monhoc" th:selected="${searchType == 'monhoc'}">Môn học</option>
+                <option value="giangvien" th:selected="${searchType == 'giangvien'}">Giảng viên</option>
+                <option value="khoa" th:selected="${searchType == 'khoa'}">Khoa</option>
+            </select>
+            
+            <input type="text" name="search" th:value="${search}" 
+                   placeholder="🔍 Nhập từ khóa tìm kiếm..." />
+            
+            <button type="submit" class="btn btn-search">🔍 Tìm kiếm</button>
+            <a th:href="@{/admin/lopmonhoc}">
+                <button type="button" class="btn btn-reset">❌ Xóa bộ lọc</button>
+            </a>
+        </form>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a th:href="@{/admin/lopmonhoc/add}">
+            <button class="btn btn-add">➕ Thêm lớp môn học mới</button>
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        <table th:if="${#lists.isEmpty(listLopMonHoc)}">
+            <!-- <tr>
+                <td colspan="11" class="empty-message">
+                    Không có dữ liệu. <a th:href="@{/admin/lopmonhoc/add}">Thêm lớp môn học mới</a>
+                </td>
+            </tr> -->
+            <thead>
+                <tr>
+                    <th style="width: 5%;">ID</th>
+                    <th style="width: 12%;">Môn học</th>
+                    <th style="width: 12%;">Giảng viên</th>
+                    <th style="width: 8%;">Nhóm</th>
+                    <th style="width: 10%;">Sĩ số</th>
+                    <th style="width: 10%;">Đã ĐK</th>
+                    <th style="width: 10%;">Ngày - Tiết</th>
+                    <th style="width: 8%;">Phòng</th>
+                    <th style="width: 15%;">Hành động</th>
+                </tr>
+            </thead>
+        </table>
+        
+        <table th:unless="${#lists.isEmpty(listLopMonHoc)}">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">ID</th>
+                    <th style="width: 12%;">Môn học</th>
+                    <th style="width: 12%;">Giảng viên</th>
+                    <th style="width: 8%;">Nhóm</th>
+                    <th style="width: 10%;">Sĩ số</th>
+                    <th style="width: 10%;">Đã ĐK</th>
+                    <th style="width: 10%;">Ngày - Tiết</th>
+                    <th style="width: 8%;">Phòng</th>
+                    <th style="width: 15%;">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="lop : ${listLopMonHoc}">
+                    <td th:text="${lop.maLopMonHoc}"></td>
+                    <td>
+                        <strong th:text="${lop.monHoc.tenMon}"></strong>
+                        <br/>
+                        <span class="info-text" th:text="${'Khoa: ' + lop.monHoc.khoa}"></span>
+                    </td>
+                    <td th:text="${lop.giangVien.hoTen}"></td>
+                    <td th:text="${lop.nhom}"></td>
+                    <td th:text="${lop.siSoToiDa}"></td>
+                    <td>
+                        <span th:text="${lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0}"></span>
+                        <span class="info-text">/</span>
+                        <span th:text="${lop.siSoToiDa}"></span>
+                        <br/>
+                        <span class="badge" 
+                              th:classappend="${(lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0) >= lop.siSoToiDa ? 'badge-full' : 'badge-available'}"
+                              th:text="${(lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0) >= lop.siSoToiDa ? 'Đầy' : 'Còn trống'}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${lop.ngayHoc}"></span>
+                        <br/>
+                        <span class="info-text" th:text="${'Tiết ' + lop.tietBatDau + '-' + lop.tietKetThuc}"></span>
+                    </td>
+                    <td th:text="${lop.phongHoc}"></td>
+                    <td>
+                        <a th:href="@{'/admin/lopmonhoc/students/' + ${lop.maLopMonHoc}}">
+                            <button class="action-btn btn-students">Danh sách sinh viên đăng kí</button>
+                        </a>
+                        <a th:href="@{'/admin/lopmonhoc/edit/' + ${lop.maLopMonHoc}}">
+                            <button class="action-btn btn-edit">✏️ Sửa</button>
+                        </a>
+                        <a th:href="@{'/admin/lopmonhoc/delete/' + ${lop.maLopMonHoc}}" 
+                           onclick="return confirm('Bạn chắc chắn muốn xóa?');">
+                            <button class="action-btn btn-delete">🗑️ Xóa</button>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
