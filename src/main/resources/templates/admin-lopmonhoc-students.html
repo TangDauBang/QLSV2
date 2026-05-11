@@ -256,6 +256,30 @@
             margin-bottom: 10px;
         }
 
+        /* Inline action buttons */
+        .action-btn {
+            padding: 6px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-score {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-score:hover {
+            background: #d68910;
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+        }
+
         @media (max-width: 1200px) {
             .stats-section {
                 grid-template-columns: repeat(2, 1fr);
@@ -298,6 +322,7 @@
     <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
     <a th:href="@{/admin/monhoc}">📚 Môn học</a>
     <a th:href="@{/admin/lopmonhoc}" class="active">📖 Lớp môn học</a>
+    <a th:href="@{/admin/dangkyhoc}">📝 Đăng ký học</a>
 </div>
 
 <div class="main">
@@ -326,7 +351,7 @@
         <div class="info-card">
             <div class="info-card-label">📅 Thời gian</div>
             <div class="info-card-value" 
-                 th:text="${#dates.format(lop.ngayHoc, 'dd/MM/yyyy') + ', Tiết ' + lop.tietBatDau + '-' + lop.tietKetThuc}"></div>
+                 th:text="${lop.ngayHoc + ', Tiết ' + lop.tietBatDau + '-' + lop.tietKetThuc}"></div>
         </div>
         <div class="info-card">
             <div class="info-card-label">🏠 Phòng học</div>
@@ -384,6 +409,7 @@
                     <th style="width: 15%;">Khoa</th>
                     <th style="width: 18%;">Ngày đăng ký</th>
                     <th style="width: 13%;">Điểm TK</th>
+                    <th style="width: 8%;">Hành động</th>
                 </tr>
             </thead>
             <tbody>
@@ -397,12 +423,17 @@
                     </td>
                     <td th:text="${dk.sinhVien.email}"></td>
                     <td th:text="${dk.sinhVien.khoa}"></td>
-                    <td th:text="${#dates.format(dk.ngayDangKy, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(dk.ngayDangKy, 'dd/MM/yyyy HH:mm')}"></td>
                     <td>
                         <span th:if="${dk.diem != null && dk.diem.diemTongKet != null}"
                               th:text="${#numbers.formatDecimal(dk.diem.diemTongKet, 0, 1)}"></span>
                         <span th:unless="${dk.diem != null && dk.diem.diemTongKet != null}"
                               style="color: #999;">---</span>
+                    </td>
+                    <td>
+                        <a th:href="@{'/admin/dangkyhoc/diem/' + ${dk.maDangKy}}" class="action-link">
+                            <button class="action-btn btn-score" type="button">📊 Nhập điểm</button>
+                        </a>
                     </td>
                 </tr>
             </tbody>

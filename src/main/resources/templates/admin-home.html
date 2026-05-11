@@ -91,11 +91,12 @@
 
 <div class="sidebar">
     <h2>Admin</h2>
-    <a href="#">Quản lý Sinh viên</a>
-    <a href="#">Quản lý Giảng viên</a>
-    <a href="#">Quản lý Môn học</a>
-    <a href="#">Quản lý Lớp môn học</a>
-    <a href="#">Đăng xuất</a>
+    <a th:href="@{/admin/sinhvien}">Quản lý Sinh viên</a>
+    <a th:href="@{/admin/giangvien}">Quản lý Giảng viên</a>
+    <a th:href="@{/admin/monhoc}">Quản lý Môn học</a>
+    <a th:href="@{/admin/lopmonhoc}">Quản lý Lớp môn học</a>
+    <a th:href="@{/admin/dangkyhoc}">Quản lý Đăng ký học</a>
+    <a th:href="@{/admin/dangxuat}">Đăng xuất</a>
 </div>
 
 <div class="main">
@@ -128,6 +129,11 @@
             <p>Quản lý lớp môn học</p>
             <button onclick="goTo('lopmonhoc')">Đi tới</button>
         </div>
+
+        <div class="card">
+            <h3>Đăng ký học</h3>
+            <p>Quản lý đăng ký học</p>
+            <button onclick="goTo('dangkyhoc')">Đi tới</button>
     </div>
 </div>
 

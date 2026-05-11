@@ -214,7 +214,7 @@
             transform: translateY(-2px);
         }
 
-        .tiет-group {
+        .tiet-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
@@ -255,6 +255,8 @@
     <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
     <a th:href="@{/admin/monhoc}">📚 Môn học</a>
     <a th:href="@{/admin/lopmonhoc}" class="active">📖 Lớp môn học</a>
+    <a th:href="@{/admin/dangkyhoc}">📝 Đăng ký học</a>
+
 </div>
 
 <div class="main">
@@ -362,7 +364,7 @@
             <!-- Tiết -->
             <div class="form-row full">
                 <label>Thời gian <span class="required">*</span></label>
-                <div class="tiет-group">
+                <div class="tiet-group">
                     <div class="form-group">
                         <label for="tietBatDau">Tiết bắt đầu (1-12) <span class="required">*</span></label>
                         <input type="number" id="tietBatDau" name="tietBatDau" th:value="${lop.tietBatDau}" 

@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý Lớp môn học</title>
+    <title>Quản lý Danh sách đăng ký học</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
@@ -24,6 +24,7 @@
             position: fixed;
             color: white;
             box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
         .sidebar h2 {
@@ -239,12 +240,12 @@
             box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
         }
 
-        .btn-students {
+        .btn-score {
             background: #f39c12;
             color: white;
         }
 
-        .btn-students:hover {
+        .btn-score:hover {
             background: #d68910;
             box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
         }
@@ -258,14 +259,14 @@
             display: inline-block;
         }
 
-        .badge-available {
+        .badge-score {
             background: #d4edda;
             color: #155724;
         }
 
-        .badge-full {
-            background: #f8d7da;
-            color: #721c24;
+        .badge-noscore {
+            background: #fff3cd;
+            color: #856404;
         }
 
         /* Info section */
@@ -275,7 +276,13 @@
             margin: 0 2px;
         }
 
-        /* Responsive */
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+
         @media (max-width: 1200px) {
             table {
                 font-size: 13px;
@@ -306,13 +313,6 @@
                 padding: 8px;
             }
         }
-
-        .empty-message {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-            font-size: 16px;
-        }
     </style>
 </head>
 <body>
@@ -323,28 +323,28 @@
     <a th:href="@{/admin/sinhvien}">👨‍🎓 Sinh viên</a>
     <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
     <a th:href="@{/admin/monhoc}">📚 Môn học</a>
-    <a th:href="@{/admin/lopmonhoc}" class="active">📖 Lớp môn học</a>
-    <a th:href="@{/admin/dangkyhoc}">📝 Đăng ký học</a>
+    <a th:href="@{/admin/lopmonhoc}">📖 Lớp môn học</a>
+    <a th:href="@{/admin/dangkyhoc}" class="active">📝 Đăng ký học</a>
 </div>
 
 <div class="main">
-    <h1>📖 Quản lý Lớp môn học</h1>
+    <h1>📝 Quản lý Đăng ký học</h1>
 
     <!-- Search & Filter -->
     <div class="search-section">
-        <form th:action="@{/admin/lopmonhoc}" method="get" class="search-form">
+        <form th:action="@{/admin/dangkyhoc}" method="get" class="search-form">
             <select name="searchType">
                 <option value="">-- Tìm kiếm theo --</option>
+                <option value="sinhvien" th:selected="${searchType == 'sinhvien'}">Sinh viên</option>
                 <option value="monhoc" th:selected="${searchType == 'monhoc'}">Môn học</option>
                 <option value="giangvien" th:selected="${searchType == 'giangvien'}">Giảng viên</option>
-                <option value="khoa" th:selected="${searchType == 'khoa'}">Khoa</option>
             </select>
             
             <input type="text" name="search" th:value="${search}" 
                    placeholder="🔍 Nhập từ khóa tìm kiếm..." />
             
             <button type="submit" class="btn btn-search">🔍 Tìm kiếm</button>
-            <a th:href="@{/admin/lopmonhoc}">
+            <a th:href="@{/admin/dangkyhoc}">
                 <button type="button" class="btn btn-reset">❌ Xóa bộ lọc</button>
             </a>
         </form>
@@ -352,84 +352,66 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <a th:href="@{/admin/lopmonhoc/add}">
-            <button class="btn btn-add">➕ Thêm lớp môn học mới</button>
+        <a th:href="@{/admin/dangkyhoc/add}">
+            <button class="btn btn-add">➕ Thêm đăng ký mới</button>
         </a>
     </div>
 
     <!-- Table -->
     <div class="table-container">
-        <table th:if="${#lists.isEmpty(listLopMonHoc)}">
-            <!-- <tr>
-                <td colspan="11" class="empty-message">
-                    Không có dữ liệu. <a th:href="@{/admin/lopmonhoc/add}">Thêm lớp môn học mới</a>
-                </td>
-            </tr> -->
+        <table>
             <thead>
                 <tr>
-                    <th style="width: 5%;">ID</th>
-                    <th style="width: 12%;">Môn học</th>
-                    <th style="width: 12%;">Giảng viên</th>
-                    <th style="width: 8%;">Nhóm</th>
-                    <th style="width: 10%;">Sĩ số</th>
-                    <th style="width: 10%;">Đã ĐK</th>
-                    <th style="width: 10%;">Ngày - Tiết</th>
-                    <th style="width: 8%;">Phòng</th>
-                    <th style="width: 15%;">Hành động</th>
-                </tr>
-            </thead>
-        </table>
-        
-        <table th:unless="${#lists.isEmpty(listLopMonHoc)}">
-            <thead>
-                <tr>
-                    <th style="width: 5%;">ID</th>
-                    <th style="width: 12%;">Môn học</th>
-                    <th style="width: 12%;">Giảng viên</th>
-                    <th style="width: 8%;">Nhóm</th>
-                    <th style="width: 10%;">Sĩ số</th>
-                    <th style="width: 10%;">Đã ĐK</th>
-                    <th style="width: 10%;">Ngày - Tiết</th>
-                    <th style="width: 8%;">Phòng</th>
-                    <th style="width: 15%;">Hành động</th>
+                    <th style="width: 6%;">Mã ĐK</th>
+                    <th style="width: 12%;">Sinh viên</th>
+                    <th style="width: 6%;">Mã SV</th>
+                    <th style="width: 14%;">Môn học</th>
+                    <th style="width: 6%;">Nhóm</th>
+                    <th style="width: 10%;">Giảng viên</th>
+                    <th style="width: 12%;">Ngày ĐK</th>
+                    <th style="width: 8%;">Điểm</th>
+                    <th style="width: 26%;">Hành động</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="lop : ${listLopMonHoc}">
-                    <td th:text="${lop.maLopMonHoc}"></td>
-                    <td>
-                        <strong th:text="${lop.monHoc.tenMon}"></strong>
-                        <br/>
-                        <span class="info-text" th:text="${'Khoa: ' + lop.monHoc.khoa}"></span>
+                <!-- <tr th:if="${#lists.isEmpty(listDangKyHoc)}">
+                    <td colspan="9" class="empty-message">
+                        Không có dữ liệu. <a th:href="@{/admin/dangkyhoc/add}">Thêm đăng ký mới</a>
                     </td>
-                    <td th:text="${lop.giangVien.hoTen}"></td>
-                    <td th:text="${lop.nhom}"></td>
-                    <td th:text="${lop.siSoToiDa}"></td>
+                </tr> -->
+                <tr th:each="dk : ${listDangKyHoc}">
+                    <td th:text="${dk.maDangKy}"></td>
+                    <td th:text="${dk.sinhVien.hoTen}"></td>
+                    <td th:text="${dk.sinhVien.maSV}"></td>
                     <td>
-                        <span th:text="${lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0}"></span>
-                        <span class="info-text">/</span>
-                        <span th:text="${lop.siSoToiDa}"></span>
+                        <strong th:text="${dk.lopMonHoc.monHoc.tenMon}"></strong>
                         <br/>
-                        <span class="badge" 
-                              th:classappend="${(lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0) >= lop.siSoToiDa ? 'badge-full' : 'badge-available'}"
-                              th:text="${(lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0) >= lop.siSoToiDa ? 'Đầy' : 'Còn trống'}"></span>
+                        <span class="info-text" th:text="|(${ dk.lopMonHoc.monHoc.soTinChi } tín chỉ)|"></span>
+                    </td>
+                    <td th:text="${dk.lopMonHoc.nhom}"></td>
+                    <td th:text="${dk.lopMonHoc.giangVien.hoTen}"></td>
+                    <td>
+                        <span th:if="${dk.ngayDangKy != null}" th:text="${#strings.substring(#strings.replace(dk.ngayDangKy.toString(), 'T', ' '), 0, 16)}"></span>
+                        <span th:unless="${dk.ngayDangKy != null}">N/A</span>
                     </td>
                     <td>
-                        <span th:text="${lop.ngayHoc}"></span>
-                        <br/>
-                        <span class="info-text" th:text="${'Tiết ' + lop.tietBatDau + '-' + lop.tietKetThuc}"></span>
+                        <div th:if="${dk.diem != null and dk.diem.diemTongKet != null}">
+                            <span class="badge badge-score" th:text="${#numbers.formatDecimal(dk.diem.diemTongKet, 0, 1) + ' ✓'}"></span>
+                        </div>
+                        <div th:unless="${dk.diem != null and dk.diem.diemTongKet != null}">
+                            <span class="badge badge-noscore">Chưa có</span>
+                        </div>
                     </td>
-                    <td th:text="${lop.phongHoc}"></td>
                     <td>
-                        <a th:href="@{'/admin/lopmonhoc/students/' + ${lop.maLopMonHoc}}">
-                            <button class="action-btn btn-students">Danh sách sinh viên đăng kí</button>
+                        <a th:href="@{'/admin/dangkyhoc/diem/' + ${dk.maDangKy}}" class="action-link">
+                            <button class="action-btn btn-score" type="button">📊 Nhập điểm</button>
                         </a>
-                        <a th:href="@{'/admin/lopmonhoc/edit/' + ${lop.maLopMonHoc}}">
-                            <button class="action-btn btn-edit">✏️ Sửa</button>
+                        <a th:href="@{'/admin/dangkyhoc/edit/' + ${dk.maDangKy}}" class="action-link">
+                            <button class="action-btn btn-edit" type="button">✏️ Sửa</button>
                         </a>
-                        <a th:href="@{'/admin/lopmonhoc/delete/' + ${lop.maLopMonHoc}}" 
-                           onclick="return confirm('Bạn chắc chắn muốn xóa?');">
-                            <button class="action-btn btn-delete">🗑️ Xóa</button>
+                        <a th:href="@{'/admin/dangkyhoc/delete/' + ${dk.maDangKy}}" 
+                           onclick="return confirm('Bạn chắc chắn muốn xóa?');" class="action-link">
+                            <button class="action-btn btn-delete" type="button">🗑️ Xóa</button>
                         </a>
                     </td>
                 </tr>

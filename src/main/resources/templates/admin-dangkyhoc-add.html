@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm Đăng ký học mới</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            padding-left: 25px;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-message strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            font-size: 13px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f2f5;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .form-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .form-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Admin</h2>
+    <a th:href="@{/admin}">🏠 Trang chủ</a>
+    <a th:href="@{/admin/sinhvien}">👨‍🎓 Sinh viên</a>
+    <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
+    <a th:href="@{/admin/monhoc}">📚 Môn học</a>
+    <a th:href="@{/admin/lopmonhoc}">📖 Lớp môn học</a>
+    <a th:href="@{/admin/dangkyhoc}" class="active">📝 Đăng ký học</a>
+</div>
+
+<div class="main">
+    <h1>➕ Thêm đăng ký học mới</h1>
+
+    <div class="form-container">
+        <div th:if="${error}" class="error-message">
+            <strong>⚠️ Lỗi:</strong> <span th:text="${error}"></span>
+        </div>
+
+        <div class="info-box">
+            <strong>ℹ️ Thông tin:</strong> Hệ thống sẽ tự động kiểm tra:
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>Sinh viên chưa đăng ký lớp này</li>
+                <li>Lớp còn chỗ trống</li>
+                <li>Sinh viên không trùng lịch học</li>
+                <li>Sinh viên ở tình trạng "Đang học"</li>
+            </ul>
+        </div>
+
+        <form th:action="@{/admin/dangkyhoc/save}" method="post" novalidate>
+            
+            <!-- Sinh viên -->
+            <div class="form-group">
+                <label for="maSV">Sinh viên <span class="required">*</span></label>
+                <select id="maSV" name="maSV" required>
+                    <option value="">-- Chọn sinh viên --</option>
+                    <option th:each="sv : ${listSinhVien}" 
+                            th:value="${sv.maSV}"
+                            th:text="${sv.hoTen + ' (' + sv.maSV + ')'}"></option>
+                </select>
+            </div>
+
+            <!-- Lớp môn học -->
+            <div class="form-group">
+                <label for="maLopMonHoc">Lớp môn học <span class="required">*</span></label>
+                <select id="maLopMonHoc" name="maLopMonHoc" required>
+                    <option value="">-- Chọn lớp môn học --</option>
+                    <option th:each="lop : ${listLopMonHoc}" 
+                            th:value="${lop.maLopMonHoc}"
+                            th:text="${lop.monHoc.tenMon + ' (Nhóm ' + lop.nhom + ') | ' + lop.giangVien.hoTen + ' | ' + lop.ngayHoc + ' - Tiết ' + lop.tietBatDau + '-' + lop.tietKetThuc}"></option>
+                </select>
+            </div>
+
+            <!-- Thông tin gợi ý -->
+            <div class="info-item">
+                <strong>💡 Lưu ý:</strong> Ngày đăng ký sẽ được tự động lưu thời gian hiện tại. Điểm sẽ được thêm sau khi cần thiết.
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-buttons">
+                <a th:href="@{/admin/dangkyhoc}">
+                    <button type="button" class="btn btn-secondary">❌ Hủy</button>
+                </a>
+                <button type="submit" class="btn btn-primary">💾 Lưu đăng ký</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const maSVSelect = document.getElementById('maSV');
+        const maLopSelect = document.getElementById('maLopMonHoc');
+
+        form.addEventListener('submit', function(e) {
+            if (!maSVSelect.value.trim()) {
+                e.preventDefault();
+                alert('Vui lòng chọn sinh viên!');
+                maSVSelect.focus();
+                return;
+            }
+
+            if (!maLopSelect.value.trim()) {
+                e.preventDefault();
+                alert('Vui lòng chọn lớp môn học!');
+                maLopSelect.focus();
+                return;
+            }
+
+            // Hiển thị loading
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = '⏳ Đang xử lý...';
+        });
+    });
+</script>
+
+</body>
+</html>
