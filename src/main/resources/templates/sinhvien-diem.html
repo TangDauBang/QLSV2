@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Xem Điểm - Sinh Viên</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            padding-left: 25px;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* Back button */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background: #f0f2f5;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .score-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            max-width: 700px;
+        }
+
+        /* Info Section */
+        .info-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .info-value {
+            color: #666;
+            text-align: right;
+        }
+
+        /* Score Grid */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .score-grid.full {
+            grid-template-columns: 1fr;
+        }
+
+        .score-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .score-box-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .score-box-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .score-box-unit {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Total Score Box */
+        .total-score-box {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .total-score-box-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .total-score-box-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .total-score-box-grade {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .no-score {
+            background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+        }
+
+        /* Grade Information */
+        .grade-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #bee5eb;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .grade-info strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .grade-info ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .grade-info li {
+            margin-bottom: 4px;
+        }
+
+        /* Formula */
+        .formula-box {
+            background: #fff9e6;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #ffeaa7;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .badge-pass {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #f0f2f5;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .score-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Sinh Viên</h2>
+    <a th:href="@{/sinhvien/home}">🏠 Trang chủ</a>
+    <a th:href="@{/sinhvien/dangkyhoc}" class="active">📚 Lớp đã đăng ký</a>
+    <a th:href="@{/sinhvien/dangkyhoc/register}">➕ Đăng ký lớp</a>
+    <a th:href="@{/sinhvien/profile}">👤 Thông tin cá nhân</a>
+    <a th:href="@{/sinhvien/password/change}">🔐 Đổi mật khẩu</a>
+</div>
+
+<div class="main">
+    <a th:href="@{/sinhvien/dangkyhoc}" class="back-link">
+        <button class="btn-back">← Quay lại</button>
+    </a>
+
+    <h1>📊 Xem Điểm</h1>
+
+    <div class="score-container">
+        <!-- Thông tin môn học -->
+        <div class="info-section">
+            <div class="info-row">
+                <span class="info-label">👨‍🎓 Sinh viên:</span>
+                <span class="info-value" th:text="${dk.sinhVien.hoTen}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">📚 Môn học:</span>
+                <span class="info-value" th:text="${dk.lopMonHoc.monHoc.tenMon}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">👨‍🏫 Giảng viên:</span>
+                <span class="info-value" th:text="${dk.lopMonHoc.giangVien.hoTen}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">📅 Ngày đăng ký:</span>
+                <span class="info-value" th:text="${#temporals.format(dk.ngayDangKy, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+        </div>
+
+        <!-- Điểm chi tiết -->
+        <div th:if="${diem != null}">
+            <!-- Điểm tổng kết -->
+            <div th:if="${diem.diemTongKet != null}" class="total-score-box">
+                <div class="total-score-box-label">Điểm Tổng Kết</div>
+                <div class="total-score-box-value" th:text="${#numbers.formatDecimal(diem.diemTongKet, 0, 1)}">0.0</div>
+                <div class="total-score-box-grade">
+                    <span th:if="${diem.diemTongKet >= 8.5}">Xuất sắc (A)</span>
+                    <span th:if="${diem.diemTongKet >= 7 && diem.diemTongKet < 8.5}">Tốt (B)</span>
+                    <span th:if="${diem.diemTongKet >= 5.5 && diem.diemTongKet < 7}">Khá (C)</span>
+                    <span th:if="${diem.diemTongKet >= 4 && diem.diemTongKet < 5.5}">Đạt (D)</span>
+                    <span th:if="${diem.diemTongKet < 4}">Không đạt (F)</span>
+                </div>
+            </div>
+
+            <div th:unless="${diem.diemTongKet != null}" class="total-score-box no-score">
+                <div class="total-score-box-label">Chưa có Điểm Tổng Kết</div>
+                <div class="total-score-box-value">---</div>
+                <div class="total-score-box-grade">Điểm sẽ được cập nhật trong thời gian sớm</div>
+            </div>
+
+            <!-- Các loại điểm -->
+            <div class="score-grid">
+                <div class="score-box">
+                    <div class="score-box-label">Điểm Chuyên Cần</div>
+                    <div class="score-box-value" th:text="${diem.diemChuyenCan != null ? #numbers.formatDecimal(diem.diemChuyenCan, 0, 1) : '---'}"></div>
+                    <div class="score-box-unit" th:if="${diem.diemChuyenCan != null}">/ 10</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-box-label">Điểm Giữa Kỳ</div>
+                    <div class="score-box-value" th:text="${diem.diemGiuaKy != null ? #numbers.formatDecimal(diem.diemGiuaKy, 0, 1) : '---'}"></div>
+                    <div class="score-box-unit" th:if="${diem.diemGiuaKy != null}">/ 10</div>
+                </div>
+            </div>
+
+            <div class="score-grid full">
+                <div class="score-box">
+                    <div class="score-box-label">Điểm Cuối Kỳ</div>
+                    <div class="score-box-value" th:text="${diem.diemCuoiKy != null ? #numbers.formatDecimal(diem.diemCuoiKy, 0, 1) : '---'}"></div>
+                    <div class="score-box-unit" th:if="${diem.diemCuoiKy != null}">/ 10</div>
+                </div>
+            </div>
+
+            <!-- Thông tin xếp loại -->
+            <div class="grade-info">
+                <strong>📋 Hướng dẫn xếp loại:</strong>
+                <ul>
+                    <li><strong>Xuất sắc (A):</strong> Từ 8.5 trở lên</li>
+                    <li><strong>Tốt (B):</strong> Từ 7.0 - 8.4</li>
+                    <li><strong>Khá (C):</strong> Từ 5.5 - 6.9</li>
+                    <li><strong>Đạt (D):</strong> Từ 4.0 - 5.4</li>
+                    <li><strong>Không đạt (F):</strong> Dưới 4.0</li>
+                </ul>
+            </div>
+
+            <!-- Công thức tính -->
+            <div class="formula-box">
+                <strong>📐 Công thức tính điểm tổng kết:</strong>
+                <br>Điểm TK = (Chuyên Cần × 0.1) + (Giữa Kỳ × 0.3) + (Cuối Kỳ × 0.6)
+                <br><br>
+                <strong>Ví dụ:</strong> Nếu bạn có CC=8, GK=7, CK=9
+                <br>Thì TK = (8 × 0.1) + (7 × 0.3) + (9 × 0.6) = 0.8 + 2.1 + 5.4 = 8.3
+            </div>
+        </div>
+
+        <!-- Chưa có điểm -->
+        <div th:unless="${diem != null}">
+            <div class="total-score-box no-score">
+                <div class="total-score-box-label">Chưa Có Điểm</div>
+                <div class="total-score-box-value">---</div>
+                <div class="total-score-box-grade">Giảng viên chưa cập nhật điểm cho lớp này</div>
+            </div>
+
+            <div class="grade-info">
+                <strong>⏳ Thông tin:</strong>
+                Điểm của bạn sẽ được cập nhật bởi giảng viên trong thời gian sớm. 
+                Vui lòng quay lại kiểm tra lại sau.
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a th:href="@{/sinhvien/dangkyhoc}">
+                <button type="button" class="btn btn-secondary">← Quay lại danh sách</button>
+            </a>
+            <a th:href="@{/sinhvien/home}">
+                <button type="button" class="btn btn-primary">🏠 Trang chủ</button>
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
