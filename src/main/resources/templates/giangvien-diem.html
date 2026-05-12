@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nhập Điểm - Giảng viên</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            padding-left: 25px;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            max-width: 600px;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .info-value {
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .optional {
+            color: #999;
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .score-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .score-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .score-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .score-box label {
+            margin-bottom: 8px;
+        }
+
+        .score-box input {
+            margin: 0;
+        }
+
+        .note-box {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .note-box strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .formula-box {
+            background: #fff9e6;
+            color: #856404;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px solid #ffeaa7;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f2f5;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .form-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .score-row {
+                grid-template-columns: 1fr;
+            }
+            .form-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Giảng Viên</h2>
+    <a th:href="@{/giangvien/home}">🏠 Trang chủ</a>
+    <a th:href="@{/giangvien/lopmonhoc}" class="active">📖 Lớp môn học</a>
+    <a th:href="@{/giangvien/profile}">👤 Thông tin cá nhân</a>
+    <a th:href="@{/giangvien/password/change}">🔐 Đổi mật khẩu</a>
+</div>
+
+<div class="main">
+    <h1>📊 Nhập Điểm</h1>
+
+    <div class="form-container">
+        <!-- Thông tin đăng ký -->
+        <div class="info-section">
+            <div class="info-row">
+                <span class="info-label">👨‍🎓 Sinh viên:</span>
+                <span class="info-value" th:text="${dk.sinhVien.hoTen}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">📚 Môn học:</span>
+                <span class="info-value" th:text="${lop.monHoc.tenMon}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">📅 Ngày đăng ký:</span>
+                <span class="info-value" th:text="${#temporals.format(dk.ngayDangKy, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>📝 Hướng dẫn nhập điểm:</strong>
+            Nhập các loại điểm từ 0 đến 10. Điểm tổng kết sẽ được tính tự động theo công thức.
+        </div>
+
+        <form th:action="@{'/giangvien/lopmonhoc/' + ${lop.maLopMonHoc} + '/diem/' + ${dk.maDangKy} + '/save'}" method="post" novalidate>
+
+            <!-- Các loại điểm -->
+            <div class="score-row">
+                <div class="score-box">
+                    <label for="diemChuyenCan">Điểm Chuyên Cần</label>
+                    <input type="number" id="diemChuyenCan" name="diemChuyenCan" 
+                           th:value="${diem.diemChuyenCan}" min="0" max="10" step="0.5" 
+                           placeholder="0 - 10" />
+                </div>
+                <div class="score-box">
+                    <label for="diemGiuaKy">Điểm Giữa Kỳ</label>
+                    <input type="number" id="diemGiuaKy" name="diemGiuaKy" 
+                           th:value="${diem.diemGiuaKy}" min="0" max="10" step="0.5" 
+                           placeholder="0 - 10" />
+                </div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-box full">
+                    <label for="diemCuoiKy">Điểm Cuối Kỳ</label>
+                    <input type="number" id="diemCuoiKy" name="diemCuoiKy" 
+                           th:value="${diem.diemCuoiKy}" min="0" max="10" step="0.5" 
+                           placeholder="0 - 10" />
+                </div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-box full">
+                    <label for="diemTongKet">Điểm Tổng Kết 
+                        <span class="optional">(Tính tự động)</span>
+                    </label>
+                    <input type="number" id="diemTongKet" name="diemTongKet" 
+                           th:value="${diem.diemTongKet}" min="0" max="10" step="0.1" 
+                           placeholder="Sẽ tính tự động" readonly />
+                </div>
+            </div>
+
+            <div class="formula-box">
+                <strong>📐 Công thức tính điểm tổng kết:</strong>
+                <br>Điểm TK = (Chuyên Cần × 0.1) + (Giữa Kỳ × 0.3) + (Cuối Kỳ × 0.6)
+                <br>Ví dụ: (8×0.1) + (7×0.3) + (9×0.6) = 8.3
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-buttons">
+                <a th:href="@{'/giangvien/lopmonhoc/' + ${lop.maLopMonHoc} + '/students'}">
+                    <button type="button" class="btn btn-secondary">❌ Hủy</button>
+                </a>
+                <button type="submit" class="btn btn-primary">💾 Lưu Điểm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const diemChuyenCan = document.getElementById('diemChuyenCan');
+        const diemGiuaKy = document.getElementById('diemGiuaKy');
+        const diemCuoiKy = document.getElementById('diemCuoiKy');
+        const diemTongKet = document.getElementById('diemTongKet');
+        const form = document.querySelector('form');
+
+        function calculateTotalScore() {
+            const cc = parseFloat(diemChuyenCan.value) || 0;
+            const gk = parseFloat(diemGiuaKy.value) || 0;
+            const ck = parseFloat(diemCuoiKy.value) || 0;
+
+            // Kiểm tra điểm hợp lệ
+            if (cc < 0 || cc > 10 || gk < 0 || gk > 10 || ck < 0 || ck > 10) {
+                diemTongKet.value = '';
+                return;
+            }
+
+            // Công thức: TK = CC×0.1 + GK×0.3 + CK×0.6
+            const tk = (cc * 0.1 + gk * 0.3 + ck * 0.6).toFixed(2);
+            diemTongKet.value = tk === '0.00' ? '' : tk;
+        }
+
+        // Tính toán khi nhập điểm
+        diemChuyenCan.addEventListener('input', calculateTotalScore);
+        diemGiuaKy.addEventListener('input', calculateTotalScore);
+        diemCuoiKy.addEventListener('input', calculateTotalScore);
+
+        // Validation trước khi submit
+        form.addEventListener('submit', function(e) {
+            const cc = parseFloat(diemChuyenCan.value);
+            const gk = parseFloat(diemGiuaKy.value);
+            const ck = parseFloat(diemCuoiKy.value);
+
+            // Kiểm tra ít nhất một điểm được nhập
+            if (isNaN(cc) && isNaN(gk) && isNaN(ck)) {
+                e.preventDefault();
+                alert('Vui lòng nhập ít nhất một loại điểm!');
+                return;
+            }
+
+            // Kiểm tra điểm hợp lệ
+            if ((cc < 0 || cc > 10) || (gk < 0 || gk > 10) || (ck < 0 || ck > 10)) {
+                e.preventDefault();
+                alert('Điểm phải từ 0 đến 10!');
+                return;
+            }
+
+            // Hiển thị loading
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = '⏳ Đang xử lý...';
+        });
+
+        // Tính điểm ban đầu nếu có dữ liệu
+        calculateTotalScore();
+    });
+</script>
+
+</body>
+</html>

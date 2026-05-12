@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin Cá nhân - Giảng viên</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            padding-left: 25px;
+        }
+
+        .main {
+            margin-left: 230px;
+            padding: 25px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            max-width: 600px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .profile-avatar {
+            font-size: 64px;
+            margin-bottom: 12px;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .profile-dept {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .profile-content {
+            padding: 30px;
+        }
+
+        .info-group {
+            margin-bottom: 25px;
+        }
+
+        .info-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-divider {
+            height: 1px;
+            background: #f0f2f5;
+            margin: 20px 0;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #f0f2f5;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        /* Alert Box */
+        .alert-box {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+            font-size: 14px;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .main {
+                margin-left: 0;
+                padding: 15px;
+            }
+            .profile-card {
+                max-width: 100%;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Giảng Viên</h2>
+    <a th:href="@{/giangvien/home}">🏠 Trang chủ</a>
+    <a th:href="@{/giangvien/lopmonhoc}">📖 Lớp môn học</a>
+    <a th:href="@{/giangvien/profile}" class="active">👤 Thông tin cá nhân</a>
+    <a th:href="@{/giangvien/password/change}">🔐 Đổi mật khẩu</a>
+</div>
+
+<div class="main">
+    <h1>👤 Thông tin Cá nhân</h1>
+
+    <div class="profile-card">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">👨‍🏫</div>
+            <div class="profile-name" th:text="${gv.hoTen}"></div>
+            <div class="profile-dept" th:text="${'Giảng viên - Khoa ' + gv.khoa}"></div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <div class="alert-box">
+                <div class="alert-title">ℹ️ Thông tin tài khoản</div>
+                Đây là thông tin cá nhân của bạn trong hệ thống. Nếu cần cập nhật, vui lòng liên hệ với quản trị viên.
+            </div>
+
+            <!-- Basic Info -->
+            <div class="info-group">
+                <div class="info-label">👤 Họ và tên</div>
+                <div class="info-value" th:text="${gv.hoTen}"></div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">📧 Email</div>
+                <div class="info-value" th:text="${gv.email}"></div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">📱 Số điện thoại</div>
+                <div class="info-value" th:text="${gv.sdt != null ? gv.sdt : 'Chưa cập nhật'}"></div>
+            </div>
+
+            <div class="info-divider"></div>
+
+            <!-- Department Info -->
+            <div class="info-group">
+                <div class="info-label">🏢 Khoa / Bộ môn</div>
+                <div class="info-value" th:text="${gv.khoa != null ? gv.khoa : 'Chưa cập nhật'}"></div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">🆔 Mã giảng viên</div>
+                <div class="info-value" th:text="${gv.maGV}"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a th:href="@{/giangvien/password/change}">
+                    <button class="btn btn-primary">🔐 Đổi mật khẩu</button>
+                </a>
+                <a th:href="@{/giangvien/home}">
+                    <button class="btn btn-secondary">← Quay lại</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

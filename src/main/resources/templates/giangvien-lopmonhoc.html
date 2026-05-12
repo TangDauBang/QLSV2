@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Lớp môn học - Giảng viên</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
+            padding-left: 25px;
+        }
+
+        /* Main */
+        .main {
+            margin-left: 230px;
+            padding: 25px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #bee5eb;
+            font-size: 14px;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(0,0,0,0.1);
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Inline action buttons */
+        .action-btn {
+            padding: 8px 14px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-students {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-students:hover {
+            background: #2980b9;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Status badges */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-full {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Info section */
+        .info-text {
+            color: #666;
+            font-size: 13px;
+            margin: 0 2px;
+        }
+
+        /* Empty message */
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            table {
+                font-size: 13px;
+            }
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+            .main {
+                margin-left: 0;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Giảng Viên</h2>
+    <a th:href="@{/giangvien/home}">🏠 Trang chủ</a>
+    <a th:href="@{/giangvien/lopmonhoc}" class="active">📖 Lớp môn học</a>
+    <a th:href="@{/giangvien/profile}">👤 Thông tin cá nhân</a>
+    <a th:href="@{/giangvien/password/change}">🔐 Đổi mật khẩu</a>
+</div>
+
+<div class="main">
+    <h1>📖 Lớp môn học được phân công</h1>
+
+    <div class="info-box">
+        <strong>ℹ️ Thông tin:</strong> Dưới đây là danh sách tất cả lớp môn học được phân công cho bạn. 
+        Hãy nhấn vào "Xem sinh viên" để xem danh sách sinh viên và nhập điểm cho từng sinh viên.
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        <table th:if="${#lists.isEmpty(danhSachLop)}">
+            <thead>
+                <tr>
+                    <th colspan="8" class="empty-message">
+                        📭 Bạn không có lớp nào được phân công
+                    </th>
+                </tr>
+            </thead>
+        </table>
+
+        <table th:unless="${#lists.isEmpty(danhSachLop)}">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">ID</th>
+                    <th style="width: 16%;">Môn học</th>
+                    <th style="width: 10%;">Nhóm</th>
+                    <th style="width: 12%;">Sĩ số</th>
+                    <th style="width: 12%;">Đã ĐK</th>
+                    <th style="width: 14%;">Ngày - Tiết</th>
+                    <th style="width: 8%;">Phòng</th>
+                    <th style="width: 20%;">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="lop : ${danhSachLop}">
+                    <td th:text="${lop.maLopMonHoc}"></td>
+                    <td>
+                        <strong th:text="${lop.monHoc.tenMon}"></strong>
+                        <br/>
+                        <span class="info-text" th:text="${'(' + lop.monHoc.soTinChi + ' tín chỉ)'}"></span>
+                    </td>
+                    <td th:text="${lop.nhom}"></td>
+                    <td th:text="${lop.siSoToiDa}"></td>
+                    <td>
+                        <span th:text="${lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0}"></span>
+                        <span class="info-text">/</span>
+                        <span th:text="${lop.siSoToiDa}"></span>
+                        <br/>
+                        <span class="badge" 
+                              th:classappend="${(lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0) >= lop.siSoToiDa ? 'badge-full' : 'badge-available'}"
+                              th:text="${(lop.danhSachDangKy != null ? lop.danhSachDangKy.size() : 0) >= lop.siSoToiDa ? 'Đầy' : 'Còn trống'}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${lop.ngayHoc}"></span>
+                        <br/>
+                        <span class="info-text" th:text="${'Tiết ' + lop.tietBatDau + '-' + lop.tietKetThuc}"></span>
+                    </td>
+                    <td th:text="${lop.phongHoc}"></td>
+                    <td>
+                        <a th:href="@{'/giangvien/lopmonhoc/' + ${lop.maLopMonHoc} + '/students'}">
+                            <button class="action-btn btn-students">Xem sinh viên</button>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
