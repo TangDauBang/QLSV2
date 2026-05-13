@@ -66,7 +66,7 @@ public class SinhVienPasswordController {
 
             // Thay đổi mật khẩu
             // TODO: Implement changePasswordSinhVien in AccountService
-            boolean success = accountService.changePassword(maSV, oldPassword, newPassword);
+            boolean success = accountService.changePasswordSinhVien(maSV, oldPassword, newPassword);
             
             if (success) {
                 model.addAttribute("success", "Đổi mật khẩu thành công!");

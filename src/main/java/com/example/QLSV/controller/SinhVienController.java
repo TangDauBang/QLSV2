@@ -81,7 +81,7 @@ public class SinhVienController {
 
     @PostMapping("/update")
     public String updateSinhVien(SinhVien sv) {
-        sinhVienService.createSinhVien(sv);
+        sinhVienService.updateSinhVien(sv.getMaSV(), sv);
         return "redirect:/admin/sinhvien";
     }
 }

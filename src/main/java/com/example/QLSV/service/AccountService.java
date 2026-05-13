@@ -2,8 +2,10 @@ package com.example.QLSV.service;
 
 import com.example.QLSV.entity.Account;
 import com.example.QLSV.entity.GiangVien;
+import com.example.QLSV.entity.SinhVien;
 import com.example.QLSV.repository.AccountRepository;
 import com.example.QLSV.repository.GiangVienRepository;
+import com.example.QLSV.repository.SinhVienRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ public class AccountService {
 
     @Autowired
     private GiangVienRepository giangVienRepository;
+
+    @Autowired
+    private SinhVienRepository sinhVienRepository;
 
     // 📌 Lấy tài khoản theo ID
     public Account getAccountById(Long id) {
@@ -59,7 +64,20 @@ public class AccountService {
     // 📌 Đổi mật khẩu (cho sinh viên)
     public boolean changePasswordSinhVien(Long maSV, String oldPassword, String newPassword) {
         // TODO: Implement similar logic for students
-        return false;
+        SinhVien sv = sinhVienRepository.findById(maSV).orElse(null);
+        if (sv == null) {
+            throw new RuntimeException("Sinh viên không tồn tại!");
+        }
+        Account account = sv.getAccount();
+        if (account == null) {
+            throw new RuntimeException("Tài khoản không tồn tại!");
+        }
+        if (!account.getPassword().equals(oldPassword)) {
+            return false;
+        }
+        account.setPassword(newPassword);
+        accountRepository.save(account);
+        return true;
     }
 
     // 📌 Tạo tài khoản
