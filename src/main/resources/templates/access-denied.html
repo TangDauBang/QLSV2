@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Không Có Quyền Truy Cập</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        h1 {
+            color: #e74c3c;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .error-code {
+            color: #95a5a6;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .details {
+            background: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            text-align: left;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .details strong {
+            color: #333;
+        }
+
+        .details p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+
+        .icon-lock {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            color: #95a5a6;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">🔒</div>
+        
+        <h1>Không Có Quyền Truy Cập</h1>
+        <p class="error-code">Mã lỗi: 403 Forbidden</p>
+
+        <p>
+            Xin lỗi, bạn không có quyền truy cập vào trang này. 
+            Vui lòng kiểm tra lại quyền của tài khoản của bạn hoặc liên hệ với quản trị viên.
+        </p>
+
+        <div class="details">
+            <p>
+                <strong>🔐 Lý do:</strong><br>
+                Quyền truy cập của bạn không phù hợp với tài nguyên được yêu cầu.
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>💡 Gợi ý:</strong><br>
+                Hãy kiểm tra xem bạn đã đăng nhập bằng tài khoản đúng hay chưa.
+            </p>
+        </div>
+
+        <div class="button-group">
+            <a href="/logout" class="btn btn-primary">
+                <span class="icon-lock">🔑</span>Quay lại đăng nhập
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                ← Quay lại
+            </a>
+        </div>
+
+        <footer>
+            © 2026 Hệ thống Quản Lý Sinh Viên
+        </footer>
+    </div>
+</body>
+</html>

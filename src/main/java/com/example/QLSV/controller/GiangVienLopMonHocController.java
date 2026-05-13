@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -33,8 +34,8 @@ public class GiangVienLopMonHocController {
 
     // 📌 Danh sách lớp của giảng viên
     @GetMapping
-    public String getAllClassesByTeacher(Model model) {
-        Long maGV = 2L; // Lấy từ authentication
+    public String getAllClassesByTeacher(Model model, HttpSession session) {
+        Long maGV = (Long) session.getAttribute("maGV");
         
         GiangVien gv = giangVienService.getGiangVienById(maGV);
         
@@ -50,8 +51,8 @@ public class GiangVienLopMonHocController {
 
     // 📌 Xem danh sách sinh viên và nhập điểm
     @GetMapping("/{id}/students")
-    public String viewStudentsAndScores(@PathVariable("id") Long maLopMonHoc, Model model) {
-        Long maGV = 2L; // Lấy từ authentication
+    public String viewStudentsAndScores(@PathVariable("id") Long maLopMonHoc, Model model, HttpSession session) {
+        Long maGV = (Long) session.getAttribute("maGV");
         
         LopMonHoc lop = lopMonHocService.getLopMonHocById(maLopMonHoc);
         
@@ -70,8 +71,9 @@ public class GiangVienLopMonHocController {
     @GetMapping("/{id}/diem/{maDangKy}")
     public String viewDiemForm(@PathVariable("id") Long maLopMonHoc,
                                @PathVariable("maDangKy") Long maDangKy,
-                               Model model) {
-        Long maGV = 2L; // Lấy từ authentication
+                               Model model,
+                               HttpSession session) {
+        Long maGV = (Long) session.getAttribute("maGV");
         
         DangKyHoc dk = dangKyHocService.getDangKyHocById(maDangKy);
         LopMonHoc lop = lopMonHocService.getLopMonHocById(maLopMonHoc);
@@ -105,9 +107,10 @@ public class GiangVienLopMonHocController {
                           @RequestParam(name = "diemChuyenCan", required = false) Double diemChuyenCan,
                           @RequestParam(name = "diemGiuaKy", required = false) Double diemGiuaKy,
                           @RequestParam(name = "diemCuoiKy", required = false) Double diemCuoiKy,
-                          Model model) {
+                          Model model,
+                          HttpSession session) {
         try {
-            Long maGV = 2L; // Lấy từ authentication
+            Long maGV = (Long) session.getAttribute("maGV");
             
             DangKyHoc dk = dangKyHocService.getDangKyHocById(maDangKy);
             LopMonHoc lop = lopMonHocService.getLopMonHocById(maLopMonHoc);

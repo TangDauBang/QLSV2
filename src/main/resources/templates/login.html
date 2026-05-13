@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng Nhập - QLSV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .login-header-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Form */
+        .login-form {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .error-message strong {
+            display: block;
+        }
+
+        /* Remember Me & Forgot Password */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .form-options input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        .form-options label {
+            margin: 0;
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .form-options a {
+            color: #667eea;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .form-options a:hover {
+            color: #5568d3;
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Footer */
+        .login-footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #f0f2f5;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .login-footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Demo Credentials */
+        .demo-credentials {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .demo-credentials strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .demo-item {
+            margin-bottom: 6px;
+            padding-left: 15px;
+        }
+
+        .demo-item:before {
+            content: "→ ";
+            margin-left: -15px;
+            margin-right: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-container {
+                width: 95%;
+            }
+
+            .login-header {
+                padding: 30px 15px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+
+            .login-form {
+                padding: 25px;
+            }
+
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <!-- Header -->
+    <div class="login-header">
+        <div class="login-header-icon">🎓</div>
+        <h1>QLSV</h1>
+        <p>Hệ thống Quản lý Sinh viên</p>
+    </div>
+
+    <!-- Form -->
+    <form th:action="@{/login}" method="post" class="login-form" novalidate>
+        <!-- Error Message -->
+        <div th:if="${error}" class="error-message">
+            <strong>⚠️ Lỗi</strong>
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Demo Credentials Info -->
+        <!-- <div class="demo-credentials">
+            <strong>📝 Tài khoản Demo:</strong>
+            <div class="demo-item"><strong>Admin:</strong> admin / admin123</div>
+            <div class="demo-item"><strong>Giảng viên:</strong> gv01@example.com / 1</div>
+            <div class="demo-item"><strong>Sinh viên:</strong> sv01@example.com / 1</div>
+        </div> -->
+
+        <!-- Username -->
+        <div class="form-group">
+            <label for="username">👤 Tên đăng nhập</label>
+            <input type="text" id="username" name="username" 
+                   placeholder="Nhập email hoặc tên đăng nhập" 
+                   required autofocus />
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <label for="password">🔐 Mật khẩu</label>
+            <input type="password" id="password" name="password" 
+                   placeholder="Nhập mật khẩu" required />
+        </div>
+
+        <!-- Remember Me -->
+        <div class="form-options">
+            <label>
+                <input type="checkbox" name="remember" />
+                Ghi nhớ đăng nhập
+            </label>
+            <a href="#" title="Liên hệ quản trị viên">Quên mật khẩu?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="login-btn" id="loginBtn">
+            🔓 Đăng Nhập
+        </button>
+    </form>
+
+    <!-- Footer -->
+    <div class="login-footer">
+        <p>© 2024 Hệ thống Quản lý Sinh viên | Phiên bản 1.0</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+
+        // Validation khi submit
+        form.addEventListener('submit', function(e) {
+            // Validate username
+            if (!usernameInput.value.trim()) {
+                e.preventDefault();
+                alert('Vui lòng nhập tên đăng nhập!');
+                usernameInput.focus();
+                return;
+            }
+
+            // Validate password
+            if (!passwordInput.value.trim()) {
+                e.preventDefault();
+                alert('Vui lòng nhập mật khẩu!');
+                passwordInput.focus();
+                return;
+            }
+
+            // Disable button during submission
+            loginBtn.disabled = true;
+            loginBtn.textContent = '⏳ Đang đăng nhập...';
+        });
+
+        // Cho phép submit khi nhấn Enter ở password field
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                form.submit();
+            }
+        });
+
+        // Focus effect
+        usernameInput.addEventListener('focus', function() {
+            this.style.borderColor = '#667eea';
+        });
+
+        usernameInput.addEventListener('blur', function() {
+            this.style.borderColor = '#e0e0e0';
+        });
+
+        passwordInput.addEventListener('focus', function() {
+            this.style.borderColor = '#667eea';
+        });
+
+        passwordInput.addEventListener('blur', function() {
+            this.style.borderColor = '#e0e0e0';
+        });
+    });
+</script>
+
+</body>
+</html>

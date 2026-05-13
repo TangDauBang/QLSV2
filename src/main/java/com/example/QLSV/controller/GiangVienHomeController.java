@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -25,10 +26,9 @@ public class GiangVienHomeController {
 
     // 📌 Trang chủ giảng viên
     @GetMapping({"", "/", "/home"})
-    public String home(Model model) {
-        // TODO: Lấy thông tin giảng viên từ session/authentication
-        // Tạm thời sử dụng ID = 1 để test
-        Long maGV = 2L; // Lấy từ authentication
+    public String home(Model model, HttpSession session) {
+        // Lấy ID giảng viên từ session
+        Long maGV = (Long) session.getAttribute("maGV");
         
         GiangVien gv = giangVienService.getGiangVienById(maGV);
         
@@ -54,8 +54,8 @@ public class GiangVienHomeController {
 
     // 📌 Xem thông tin cá nhân
     @GetMapping("/profile")
-    public String viewProfile(Model model) {
-        Long maGV = 2L; // Lấy từ authentication
+    public String viewProfile(Model model, HttpSession session) {
+        Long maGV = (Long) session.getAttribute("maGV");
         
         GiangVien gv = giangVienService.getGiangVienById(maGV);
         

@@ -24,7 +24,7 @@ public class GiangVien {
     private Account account;
 
 
-    @OneToMany(mappedBy = "giangVien")
+    @OneToMany(mappedBy = "giangVien", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<LopMonHoc> lopMonHocs;
 

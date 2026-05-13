@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/sinhvien/password")
 public class SinhVienPasswordController {
@@ -21,8 +23,8 @@ public class SinhVienPasswordController {
 
     // 📌 Form đổi mật khẩu
     @GetMapping("/change")
-    public String showChangePasswordForm(Model model) {
-        Long maSV = 6L; // Lấy từ authentication
+    public String showChangePasswordForm(Model model, HttpSession session) {
+        Long maSV = (Long) session.getAttribute("maSV");
         
         SinhVien sv = sinhVienService.getSinhVienById(maSV);
         
@@ -39,9 +41,10 @@ public class SinhVienPasswordController {
     public String changePassword(@RequestParam("oldPassword") String oldPassword,
                                  @RequestParam("newPassword") String newPassword,
                                  @RequestParam("confirmPassword") String confirmPassword,
-                                 Model model) {
+                                 Model model,
+                                 HttpSession session) {
         try {
-            Long maSV = 6L; // Lấy từ authentication
+            Long maSV = (Long) session.getAttribute("maSV");
             
             // Kiểm tra mật khẩu mới và xác nhận có khớp không
             if (!newPassword.equals(confirmPassword)) {

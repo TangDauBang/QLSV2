@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -31,8 +32,9 @@ public class SinhVienDangKyController {
     @GetMapping
     public String getDanhSachDangKy(Model model, 
                                      @RequestParam(required = false) String search,
-                                     @RequestParam(required = false) String searchType) {
-        Long maSV = 6L; // Lấy từ authentication
+                                     @RequestParam(required = false) String searchType,
+                                     HttpSession session) {
+        Long maSV = (Long) session.getAttribute("maSV");
         
         List<DangKyHoc> danhSachDangKy;
         
@@ -65,12 +67,12 @@ public class SinhVienDangKyController {
 
     // 📌 Xem điểm chi tiết
     @GetMapping("/diem/{id}")
-    public String viewDiem(@PathVariable("id") Long maDangKy, Model model) {
+    public String viewDiem(@PathVariable("id") Long maDangKy, Model model, HttpSession session) {
         DangKyHoc dk = dangKyHocService.getDangKyHocById(maDangKy);
         
         if (dk != null) {
             // Kiểm tra sinh viên có quyền xem điểm này không
-            Long maSV = 6L; // Lấy từ authentication
+            Long maSV = (Long) session.getAttribute("maSV");
             if (!dk.getSinhVien().getMaSV().equals(maSV)) {
                 return "redirect:/sinhvien/dangkyhoc";
             }
@@ -89,8 +91,9 @@ public class SinhVienDangKyController {
     @GetMapping("/register")
     public String showRegisterForm(Model model,
                                    @RequestParam(required = false) String search,
-                                   @RequestParam(required = false) String searchType) {
-        Long maSV = 6L; // Lấy từ authentication
+                                   @RequestParam(required = false) String searchType,
+                                   HttpSession session) {
+        Long maSV = (Long) session.getAttribute("maSV");
         
         List<LopMonHoc> danhSachLop;
         
@@ -128,14 +131,15 @@ public class SinhVienDangKyController {
     @PostMapping("/register")
     public String registerClass(@RequestParam("maLopMonHoc") Long maLopMonHoc, 
                                 Model model, 
-                                RedirectAttributes redirectAttributes) {
+                                RedirectAttributes redirectAttributes,
+                                HttpSession session) {
         try {
-            Long maSV = 6L; // Lấy từ authentication
+            Long maSV = (Long) session.getAttribute("maSV");
             
             // Kiểm tra dữ liệu
             if (maLopMonHoc == null || maLopMonHoc <= 0) {
                 model.addAttribute("error", "Vui lòng chọn lớp môn học!");
-                return showRegisterForm(model, null, null);
+                return showRegisterForm(model, null, null, session);
             }
             
             // Tạo đăng ký
@@ -145,18 +149,19 @@ public class SinhVienDangKyController {
             return "redirect:/sinhvien/dangkyhoc";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
-            return showRegisterForm(model, null, null);
+            return showRegisterForm(model, null, null, session);
         }
     }
 
     // 📌 Hủy đăng ký lớp
     @GetMapping("/cancel/{id}")
     public String cancelRegister(@PathVariable("id") Long maDangKy, 
-                                 RedirectAttributes redirectAttributes) {
+                                 RedirectAttributes redirectAttributes,
+                                 HttpSession session) {
         DangKyHoc dk = dangKyHocService.getDangKyHocById(maDangKy);
         
         if (dk != null) {
-            Long maSV = 6L; // Lấy từ authentication
+            Long maSV = (Long) session.getAttribute("maSV");
             
             // Kiểm tra quyền
             if (dk.getSinhVien().getMaSV().equals(maSV)) {
