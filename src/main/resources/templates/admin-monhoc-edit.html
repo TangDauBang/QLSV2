@@ -5,123 +5,191 @@
     <title>Sửa Môn học</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        /* Reset và font chữ đồng bộ với file mẫu */
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        /* Sidebar đồng bộ với file mẫu */
         .sidebar {
             width: 230px;
             height: 100vh;
-            background: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             position: fixed;
             color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
+
         .sidebar h2 {
             text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #3d566e;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+            font-weight: 600;
         }
+
         .sidebar a {
             display: block;
             padding: 12px 20px;
             color: white;
             text-decoration: none;
-            transition: 0.2s;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
         }
+
         .sidebar a:hover {
-            background: #34495e;
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
             padding-left: 25px;
         }
+
+        /* Main content */
         .main {
             margin-left: 230px;
             padding: 25px;
         }
+
         h1 {
-            margin-bottom: 20px;
-            color: #2c3e50;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
         }
+
+        /* Form container */
         .form-container {
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-width: 600px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            max-width: 700px;
         }
+
         .form-row {
             display: flex;
             gap: 20px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
+
         .form-group {
             flex: 1;
             min-width: 250px;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
+            font-weight: 600;
             color: #2c3e50;
+            font-size: 14px;
         }
+
+        /* Input - đồng bộ với file mẫu */
         input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
             box-sizing: border-box;
         }
+
         input:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+
+        /* Buttons */
         .form-buttons {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: flex-end;
             margin-top: 30px;
         }
+
         button {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s;
         }
+
         .btn-primary {
-            background: #3498db;
+            background: #667eea;
             color: white;
         }
+
         .btn-primary:hover {
-            background: #2980b9;
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
+
         .btn-secondary {
-            background: #95a5a6;
-            color: white;
+            background: #f0f2f5;
+            color: #333;
         }
+
         .btn-secondary:hover {
-            background: #7f8c8d;
+            background: #e0e0e0;
         }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .form-row { flex-direction: column; }
-            .form-group { min-width: auto; }
+            .sidebar {
+                width: 0;
+                transform: translateX(-100%);
+            }
+            .main {
+                margin-left: 0;
+                padding: 15px;
+            }
+            .form-container {
+                padding: 20px;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .form-group {
+                min-width: auto;
+            }
+            .form-buttons {
+                flex-direction: column;
+            }
+            .form-buttons button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <h2>Admin</h2>
-    <a th:href="@{/admin}">Trang chủ</a>
-    <a th:href="@{/admin/sinhvien}">Sinh viên</a>
-    <a th:href="@{/admin/giangvien}">Giảng viên</a>
-    <a th:href="@{/admin/monhoc}">Môn học</a>
-    <a th:href="@{/admin/lopmonhoc}">Lớp môn học</a>
-    <a th:href="@{/admin/dangkyhoc}">Đăng ký học</a>
+    <h2>📊 Admin</h2>
+    <a th:href="@{/admin}">🏠 Trang chủ</a>
+    <a th:href="@{/admin/sinhvien}">👨‍🎓 Sinh viên</a>
+    <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
+    <a th:href="@{/admin/monhoc}" class="active">📚 Môn học</a>
+    <a th:href="@{/admin/lopmonhoc}">📖 Lớp môn học</a>
+    <a th:href="@{/admin/dangkyhoc}">📝 Đăng ký học</a>
+    <a th:href="@{/logout}">🚪 Đăng xuất</a>
 </div>
 
 <div class="main">
@@ -169,7 +237,7 @@
                 this.style.borderColor = '#e74c3c';
             } else {
                 this.setCustomValidity('');
-                this.style.borderColor = '#e1e8ed';
+                this.style.borderColor = '#e0e0e0';
             }
         });
 
@@ -180,7 +248,7 @@
                 this.style.borderColor = '#e74c3c';
             } else {
                 this.setCustomValidity('');
-                this.style.borderColor = '#e1e8ed';
+                this.style.borderColor = '#e0e0e0';
             }
         });
 
@@ -203,4 +271,3 @@
 
 </body>
 </html>
-

@@ -2,28 +2,38 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý Sinh viên</title>
+    <title>Quản lý Sinh viên - Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Sidebar */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        /* Sidebar đồng bộ */
         .sidebar {
             width: 230px;
             height: 100vh;
-            background: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             position: fixed;
             color: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
         .sidebar h2 {
             text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #3d566e;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            font-size: 20px;
+            font-weight: 600;
         }
 
         .sidebar a {
@@ -31,182 +41,324 @@
             padding: 12px 20px;
             color: white;
             text-decoration: none;
-            transition: 0.2s;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
         }
 
-        .sidebar a:hover {
-            background: #34495e;
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #fff;
             padding-left: 25px;
         }
 
-        /* Main */
+        /* Main content */
         .main {
             margin-left: 230px;
             padding: 25px;
         }
 
         h1 {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
         }
 
-        /* Form */
+        /* Form card */
         .form {
-            margin-bottom: 25px;
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
         }
 
-        .form form {
+        .search-form {
             display: flex;
-            flex-wrap: wrap;
             gap: 10px;
+            flex-wrap: wrap;
             align-items: center;
         }
 
-        input, select {
-            padding: 10px;
-            border: 1px solid #ddd;
+        .search-form input {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
             border-radius: 6px;
-            min-width: 150px;
-        }
-
-        input[name="search"] {
-            min-width: 320px;
+            font-size: 14px;
             flex: 1;
+            min-width: 250px;
+            transition: border-color 0.3s;
         }
 
-        input:focus, select:focus {
+        .search-form input:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: #667eea;
         }
 
-        button {
-            padding: 10px 15px;
+        .btn {
+            padding: 10px 20px;
             border: none;
-            background: #3498db;
-            color: white;
             border-radius: 6px;
             cursor: pointer;
-            transition: 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
         }
 
-        button:hover {
-            background: #2980b9;
+        .btn-search {
+            background: #667eea;
+            color: white;
         }
 
-        .delete {
-            background: #e74c3c;
+        .btn-search:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
-        .delete:hover {
-            background: #c0392b;
+        .btn-reset {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-add {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
         }
 
         /* Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 14px;
+            min-width: 900px;
         }
 
-        th, td {
-            padding: 12px;
-            text-align: center;
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
 
         th {
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(0,0,0,0.1);
+        }
+
+        td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Action buttons */
+        .action-btn {
+            padding: 6px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-edit {
             background: #3498db;
             color: white;
         }
 
-        tr:nth-child(even) {
-            background: #f9f9f9;
+        .btn-edit:hover {
+            background: #2980b9;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
         }
 
-        tr:hover {
-            background: #eef6ff;
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
         }
 
-        td a button {
-            margin: 2px;
+        .btn-delete:hover {
+            background: #c0392b;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Empty message */
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                transform: translateX(-100%);
+            }
+            .main {
+                margin-left: 0;
+            }
+            .search-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-add {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <h2>Admin</h2>
-    <a th:href="@{/admin}">Trang chủ</a>
-    <a th:href="@{/admin/sinhvien}">Sinh viên</a>
-    <a th:href="@{/admin/giangvien}">Giảng viên</a>
-    <a th:href="@{/admin/monhoc}">Môn học</a>
-    <a th:href="@{/admin/lopmonhoc}">Lớp môn học</a>
-    <a th:href="@{/admin/dangkyhoc}">Đăng ký học</a>
+    <h2>📊 Admin</h2>
+    <a th:href="@{/admin}">🏠 Trang chủ</a>
+    <a th:href="@{/admin/sinhvien}" class="active">👨‍🎓 Sinh viên</a>
+    <a th:href="@{/admin/giangvien}">👨‍🏫 Giảng viên</a>
+    <a th:href="@{/admin/monhoc}">📚 Môn học</a>
+    <a th:href="@{/admin/lopmonhoc}">📖 Lớp môn học</a>
+    <a th:href="@{/admin/dangkyhoc}">📝 Đăng ký học</a>
+    <a th:href="@{/logout}">🚪 Đăng xuất</a>
 </div>
 
 <div class="main">
-    <h1>Quản lý Sinh viên</h1>
+    <h1>👨‍🎓 Quản lý Sinh viên</h1>
 
     <!-- Search Form -->
     <div class="form">
-        <form th:action="@{/admin/sinhvien}" method="get">
-            <input type="text" name="search" th:value="${search}" placeholder="🔍 Tìm kiếm sinh viên theo tên sinh viên" />
-            <button type="submit">Tìm kiếm</button>
+        <form th:action="@{/admin/sinhvien}" method="get" class="search-form">
+            <input type="text" name="search" th:value="${search}" placeholder="🔍 Tìm kiếm sinh viên theo tên" />
+            <button type="submit" class="btn btn-search">🔍 Tìm kiếm</button>
             <a th:href="@{/admin/sinhvien}">
-                <button type="button" style="background: #95a5a6;">Xóa bộ lọc</button>
+                <button type="button" class="btn btn-reset">❌ Xóa bộ lọc</button>
             </a>
         </form>
     </div>
 
     <!-- Add Button -->
-    <div class="form" style="justify-content: flex-end;">
+    <div class="form" style="display: flex; justify-content: flex-start; padding: 15px 20px;">
         <a th:href="@{/admin/sinhvien/add}">
-            <button style="background: #27ae60;">➕ Thêm sinh viên mới</button>
+            <button class="btn btn-add">➕ Thêm sinh viên mới</button>
         </a>
     </div>
 
     <!-- Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Họ tên</th>
-                <th>Email</th>
-                <th>SĐT</th>
-                <th>Khoa</th>
-                <th>Giới tính</th>
-                <th>Ngày sinh</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="sv : ${listSinhVien}">
-                <td th:text="${sv.maSV}"></td>
-                <td th:text="${sv.hoTen}"></td>
-                <td th:text="${sv.email}"></td>
-                <td th:text="${sv.sdt}"></td>
-                <td th:text="${sv.khoa}"></td>
-                <td th:text="${sv.gioiTinh}"></td>
-                <td th:text="${sv.ngaySinh}"></td>
-                <td th:text="${sv.trangThai}"></td>
-                <td>
-                    <a th:href="@{'/admin/sinhvien/edit/' + ${sv.maSV}}">
-                        <button>Sửa</button>
-                    </a>
-                    <a th:href="@{'/admin/sinhvien/delete/' + ${sv.maSV}}">
-                        <button class="delete">Xóa</button>
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table th:if="${#lists.isEmpty(listSinhVien)}">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>SĐT</th>
+                    <th>Khoa</th>
+                    <th>Giới tính</th>
+                    <th>Ngày sinh</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+        </table>
+        <table th:unless="${#lists.isEmpty(listSinhVien)}">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>SĐT</th>
+                    <th>Khoa</th>
+                    <th>Giới tính</th>
+                    <th>Ngày sinh</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sv : ${listSinhVien}">
+                    <td th:text="${sv.maSV}"></td>
+                    <td th:text="${sv.hoTen}"></td>
+                    <td th:text="${sv.email}"></td>
+                    <td th:text="${sv.sdt}"></td>
+                    <td th:text="${sv.khoa}"></td>
+                    <td th:text="${sv.gioiTinh}"></td>
+                    <td th:text="${sv.ngaySinh}"></td>
+                    <td>
+                        <span class="badge" 
+                              th:classappend="${sv.trangThai == 'DANG_HOC' ? 'badge-danghoc' : (sv.trangThai == 'BAO_LUU' ? 'badge-baoluu' : 'badge-totnghiep')}"
+                              th:text="${sv.trangThai == 'DANG_HOC' ? 'Đang học' : (sv.trangThai == 'BAO_LUU' ? 'Bảo lưu' : 'Tốt nghiệp')}">
+                        </span>
+                    </td>
+                    <td>
+                        <a th:href="@{'/admin/sinhvien/edit/' + ${sv.maSV}}">
+                            <button class="action-btn btn-edit">✏️ Sửa</button>
+                        </a>
+                        <a th:href="@{'/admin/sinhvien/delete/' + ${sv.maSV}}" 
+                           onclick="return confirm('Bạn chắc chắn muốn xóa sinh viên này?');">
+                            <button class="action-btn btn-delete">🗑️ Xóa</button>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<style>
+    /* Thêm style cho badge trạng thái */
+    .badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    .badge-danghoc {
+        background: #d4edda;
+        color: #155724;
+    }
+    .badge-baoluu {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .badge-totnghiep {
+        background: #cce5ff;
+        color: #004085;
+    }
+</style>
 
 </body>
 </html>

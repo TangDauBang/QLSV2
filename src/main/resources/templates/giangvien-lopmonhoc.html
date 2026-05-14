@@ -172,6 +172,18 @@
             color: #999;
         }
 
+        .sidebar .logout-section {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar .logout-section a {
+            background: rgba(231, 76, 60, 0.1);
+            border-left-color: #e74c3c;
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             table {
@@ -201,11 +213,14 @@
 <body>
 
 <div class="sidebar">
-    <h2>Giảng Viên</h2>
+    <h2>👨‍🏫 Giảng Viên</h2>
     <a th:href="@{/giangvien/home}">🏠 Trang chủ</a>
     <a th:href="@{/giangvien/lopmonhoc}" class="active">📖 Lớp môn học</a>
     <a th:href="@{/giangvien/profile}">👤 Thông tin cá nhân</a>
     <a th:href="@{/giangvien/password/change}">🔐 Đổi mật khẩu</a>
+    <div class="logout-section">
+        <a th:href="@{/logout}">🚪 Đăng xuất</a>
+    </div>
 </div>
 
 <div class="main">
